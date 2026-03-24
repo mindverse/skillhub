@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>技能宝 SkillHub — 全景看板</title>
+<style>
+:root{--bg:#06070c;--bg2:#0c0e16;--card:#12141f;--card2:#191c2b;--border:#1e2236;--text:#e2e4ef;--dim:#5c6089;--accent:#7c6ef0;--green:#34d399;--green2:#059669;--orange:#fbbf24;--red:#f87171;--blue:#60a5fa;--pink:#f472b6;--cyan:#22d3ee;--purple:#a78bfa}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,'PingFang SC','Helvetica Neue','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+
+/* Header */
+.header{padding:40px 48px 32px;background:linear-gradient(180deg,rgba(124,110,240,.06) 0%,transparent 100%)}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.header h1{font-size:36px;font-weight:800;letter-spacing:-.5px}
+.header h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .subtitle{font-size:15px;color:var(--dim);margin-top:4px;max-width:600px}
+.header .meta{text-align:right;font-size:12px;color:var(--dim)}
+.header .meta a{color:var(--blue);text-decoration:none}
+
+/* Hero numbers */
+.hero{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);margin:32px 48px 0;border-radius:16px;overflow:hidden}
+.hero-cell{background:var(--card);padding:24px;text-align:center}
+.hero-cell .v{font-size:40px;font-weight:800;line-height:1}
+.hero-cell .l{font-size:11px;color:var(--dim);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+.hero-cell.c1 .v{color:var(--green)}.hero-cell.c2 .v{color:var(--accent)}.hero-cell.c3 .v{color:var(--blue)}.hero-cell.c4 .v{color:var(--cyan)}.hero-cell.c5 .v{color:var(--orange)}.hero-cell.c6 .v{color:var(--pink)}
+
+/* Section */
+.section{padding:40px 48px 0}
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.section-head h2{font-size:20px;font-weight:700}
+.section-head .badge{font-size:11px;padding:4px 12px;border-radius:12px;background:rgba(124,110,240,.12);color:var(--accent)}
+
+/* ===== VISION MAP ===== */
+.vision{position:relative;margin:0 48px;padding:48px 0}
+.vision-line{position:absolute;top:0;bottom:0;left:50%;width:3px;background:linear-gradient(180deg,var(--accent),var(--green2),var(--blue),var(--orange),var(--dim));border-radius:2px;transform:translateX(-50%)}
+.v-node{position:relative;display:flex;align-items:flex-start;margin-bottom:48px}
+.v-node:last-child{margin-bottom:0}
+.v-node.left{flex-direction:row;padding-right:calc(50% + 40px)}
+.v-node.right{flex-direction:row-reverse;padding-left:calc(50% + 40px)}
+.v-dot{position:absolute;left:50%;transform:translateX(-50%);width:20px;height:20px;border-radius:50%;border:3px solid var(--bg);z-index:2}
+.v-dot.done{background:var(--green)}
+.v-dot.active{background:var(--orange);box-shadow:0 0 16px rgba(251,191,36,.4)}
+.v-dot.future{background:var(--dim)}
+.v-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;flex:1;transition:all .2s}
+.v-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.v-card.done{border-left:3px solid var(--green)}
+.v-card.active{border-left:3px solid var(--orange)}
+.v-card.future{opacity:.6}
+.v-card .phase-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.v-card .phase-label.done{color:var(--green)}
+.v-card .phase-label.active{color:var(--orange)}
+.v-card .phase-label.future{color:var(--dim)}
+.v-card h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.v-card .desc{font-size:13px;color:var(--dim);margin-bottom:10px}
+.v-card .stats{display:flex;gap:12px;flex-wrap:wrap}
+.v-card .stat{font-size:12px;padding:3px 10px;border-radius:6px;background:rgba(255,255,255,.04)}
+.v-card .stat b{color:var(--text)}
+.v-card .stat{color:var(--dim)}
+
+/* ===== FLYWHEEL ===== */
+.flywheel{display:flex;justify-content:center;align-items:center;padding:48px 0;position:relative}
+.fw-center{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:2;box-shadow:0 0 40px rgba(124,110,240,.3)}
+.fw-center .fw-title{font-size:14px;font-weight:800;color:#fff}
+.fw-center .fw-sub{font-size:10px;color:rgba(255,255,255,.7)}
+.fw-ring{position:absolute;width:400px;height:400px;border-radius:50%;border:1px dashed var(--border)}
+.fw-item{position:absolute;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;width:160px;text-align:center;font-size:12px;transition:all .2s}
+.fw-item:hover{border-color:var(--accent);transform:scale(1.05)}
+.fw-item .fw-icon{font-size:24px;margin-bottom:4px}
+.fw-item .fw-name{font-weight:600;font-size:13px}
+.fw-item .fw-desc{color:var(--dim);font-size:11px;margin-top:2px}
+.fw-item.top{top:-60px;left:50%;transform:translateX(-50%)}
+.fw-item.right{top:50%;right:-80px;transform:translateY(-50%)}
+.fw-item.bottom{bottom:-60px;left:50%;transform:translateX(-50%)}
+.fw-item.left{top:50%;left:-80px;transform:translateY(-50%)}
+.fw-item.tr{top:20px;right:-40px}
+.fw-item.br{bottom:20px;right:-40px}
+.fw-item.bl{bottom:20px;left:-40px}
+.fw-item.tl{top:20px;left:-40px}
+.fw-arrow{position:absolute;color:var(--accent);font-size:20px;z-index:1}
+
+/* ===== SKILLS MATRIX ===== */
+.matrix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.m-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px;font-size:13px;transition:all .15s}
+.m-card:hover{border-color:var(--accent)}
+.m-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.m-dot.live{background:var(--green)}.m-dot.cn{background:var(--pink)}
+.m-name{font-weight:500}
+.m-type{font-size:10px;color:var(--dim)}
+
+/* ===== COMPETITOR ===== */
+.comp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.comp-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;transition:all .2s}
+.comp-card:hover{border-color:var(--accent)}
+.comp-card.us{border-color:var(--green)}
+.comp-card h3{font-size:15px;margin-bottom:2px}
+.comp-card .comp-sub{font-size:11px;color:var(--dim);margin-bottom:12px}
+.comp-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.comp-label{font-size:11px;color:var(--dim);width:42px;text-align:right;flex-shrink:0}
+.comp-bar{flex:1;height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
+.comp-fill{height:100%;border-radius:3px}
+.comp-val{font-size:10px;color:var(--dim);width:40px}
+
+/* ===== TOOLS ===== */
+.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px;transition:all .2s}
+.tool-card:hover{border-color:var(--accent)}
+.tool-card h4{font-size:14px;margin-bottom:2px}
+.tool-card p{font-size:12px;color:var(--dim)}
+.tool-card code{font-size:11px;background:var(--card2);padding:2px 8px;border-radius:4px;color:var(--cyan);display:inline-block;margin-top:6px}
+
+/* ===== PR TABLE ===== */
+.pr-table{width:100%;border-collapse:collapse;font-size:12px;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.pr-table th{text-align:left;padding:10px 14px;background:var(--card2);color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.pr-table td{padding:8px 14px;border-top:1px solid var(--border)}
+.pr-table a{color:var(--blue);text-decoration:none}
+.pr-table a:hover{text-decoration:underline}
+
+/* ===== TIMELINE (bottom) ===== */
+.timeline-bar{display:flex;margin:0 48px;border-radius:12px;overflow:hidden;height:48px;background:var(--card);border:1px solid var(--border)}
+.tl-seg{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;position:relative;overflow:hidden}
+.tl-seg .tl-label{z-index:1;white-space:nowrap}
+.tl-seg.done{background:var(--green2)}
+.tl-seg.active{background:rgba(251,191,36,.25);color:var(--orange)}
+.tl-seg.future{background:rgba(255,255,255,.03);color:var(--dim)}
+
+.footer{text-align:center;padding:40px 48px;font-size:11px;color:var(--dim)}
+.footer code{color:var(--cyan);background:var(--card);padding:4px 12px;border-radius:6px;font-size:12px}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:repeat(3,1fr)}
+  .comp-grid{grid-template-columns:repeat(2,1fr)}
+  .v-node.left,.v-node.right{padding:0 0 0 40px;flex-direction:row}
+  .v-dot{left:20px}
+  .vision-line{left:20px}
+  .flywheel{transform:scale(.7)}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1><em>技能宝</em> SkillHub</h1>
+      <div class="subtitle">中文社区最大的 AI 技能搜索、安装与智能推荐平台。去中心化分发，安全评分可感知，能力缺口驱动增长。</div>
+    </div>
+    <div class="meta">
+      2026-03-18<br>
+      <a href="https://github.com/mindverse/skillhub">github.com/mindverse/skillhub</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO NUMBERS -->
+<div class="hero">
+  <div class="hero-cell c1"><div class="v">20</div><div class="l">卫星 Skill</div></div>
+  <div class="hero-cell c2"><div class="v">2004</div><div class="l">精选库索引</div></div>
+  <div class="hero-cell c3"><div class="v">42</div><div class="l">Agent 平台</div></div>
+  <div class="hero-cell c4"><div class="v">5</div><div class="l">工具 &amp; CLI</div></div>
+  <div class="hero-cell c5"><div class="v">10</div><div class="l">中文化 PR</div></div>
+  <div class="hero-cell c6"><div class="v">15</div><div class="l">方案文档</div></div>
+</div>
+
+<!-- TIMELINE BAR -->
+<div class="section"><div class="section-head"><h2>整体进度</h2></div></div>
+<div class="timeline-bar">
+  <div class="tl-seg done" style="width:15%"><div class="tl-label">P0 搭建 ✓</div></div>
+  <div class="tl-seg done" style="width:18%"><div class="tl-label">P1 MVP ✓</div></div>
+  <div class="tl-seg done" style="width:15%"><div class="tl-label">P2 扩展 ✓</div></div>
+  <div class="tl-seg done" style="width:17%"><div class="tl-label">P3 安全+精选 ✓</div></div>
+  <div class="tl-seg active" style="width:17%"><div class="tl-label">P4 增长 ◐</div></div>
+  <div class="tl-seg future" style="width:18%"><div class="tl-label">P5 生态</div></div>
+</div>
+
+<!-- ===== VISION MAP ===== -->
+<div class="section"><div class="section-head"><h2>大蓝图：从 0 到垄断中文 Skill 分发</h2><div class="badge">6 个 Phase</div></div></div>
+
+<div class="vision">
+  <div class="vision-line"></div>
+
+  <!-- Phase 0 -->
+  <div class="v-node left">
+    <div class="v-dot done"></div>
+    <div class="v-card done">
+      <div class="phase-label done">Phase 0 · 完成</div>
+      <h3>基础搭建 — 想清楚再动手</h3>
+      <div class="desc">从 51 分钟会议录音出发，完成竞品分析、产品方案设计、5 项核心决策。建立 15 份方案文档体系。</div>
+      <div class="stats">
+        <div class="stat"><b>15</b> 份方案文档</div>
+        <div class="stat"><b>5</b> 项决策拍板</div>
+        <div class="stat"><b>3</b> 套产品方案</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 1 -->
+  <div class="v-node right">
+    <div class="v-dot done"></div>
+    <div class="v-card done">
+      <div class="phase-label done">Phase 1 · 完成</div>
+      <h3>MVP 上线 — 能用就发</h3>
+      <div class="desc">技能宝方案B智能版 + 5 个首发卫星 Skill + 安全评分 v1 + 精选库 390 条。发布到 GitHub，42 个 Agent 平台可安装。</div>
+      <div class="stats">
+        <div class="stat"><b>5</b> 卫星 Skill</div>
+        <div class="stat"><b>390</b> 精选库</div>
+        <div class="stat"><b>42</b> Agent 平台</div>
+        <div class="stat"><b>12</b> 重安全检测</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 2 -->
+  <div class="v-node left">
+    <div class="v-dot done"></div>
+    <div class="v-card done">
+      <div class="phase-label done">Phase 2 · 完成</div>
+      <h3>卫星扩展 — 内容矩阵成型</h3>
+      <div class="desc">10 个卫星 Skill 全部上线，交叉导流机制验证通过。10 个中文化 PR 提交到社区，建立开源存在感。</div>
+      <div class="stats">
+        <div class="stat"><b>10</b> 卫星 Skill</div>
+        <div class="stat"><b>10</b> 中文化 PR</div>
+        <div class="stat">导流测试 <b>通过</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 3 -->
+  <div class="v-node right">
+    <div class="v-dot done"></div>
+    <div class="v-card done">
+      <div class="phase-label done">Phase 3 · 完成</div>
+      <h3>安全 + 精选 — 差异化壁垒</h3>
+      <div class="desc">安全评分升级到 v2（OpenSSF Scorecard）。精选库 1000+ 条。第三批卫星 Skill 上线，推荐排序算法实现。</div>
+      <div class="stats">
+        <div class="stat">安全评分 <b>v2</b></div>
+        <div class="stat"><b>20</b> 卫星 Skill</div>
+        <div class="stat"><b>1004</b> 精选库</div>
+        <div class="stat">排序算法 <b>上线</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 4 -->
+  <div class="v-node left">
+    <div class="v-dot active"></div>
+    <div class="v-card active">
+      <div class="phase-label active">Phase 4 · 进行中</div>
+      <h3>增长推广 — 枪造好了等扣扳机</h3>
+      <div class="desc">SDK/CLI 工具就绪，精选库 2004 条。技术侧全部完成。等待运营侧启动：种子推广、内容投放、多账号隔离。</div>
+      <div class="stats">
+        <div class="stat">CLI <b>就绪</b></div>
+        <div class="stat"><b>2004</b> 精选库</div>
+        <div class="stat" style="color:var(--orange)">推广 <b>待启动</b></div>
+        <div class="stat" style="color:var(--orange)">内容 <b>待启动</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 5 -->
+  <div class="v-node right">
+    <div class="v-dot future"></div>
+    <div class="v-card future">
+      <div class="phase-label future">Phase 5 · 计划中</div>
+      <h3>生态成熟 — 垄断中文 Skill 分发</h3>
+      <div class="desc">联盟计划开放，升级到方案C生态版。AI 代码审查上线。导流切换到宽触发。精选库 5000+，目标安装量 20 万。</div>
+      <div class="stats">
+        <div class="stat">联盟计划</div>
+        <div class="stat">社区评价</div>
+        <div class="stat">AI 审查</div>
+        <div class="stat">目标 <b>20万</b> 安装</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FLYWHEEL ===== -->
+<div class="section"><div class="section-head"><h2>增长飞轮</h2><div class="badge">核心增长引擎</div></div></div>
+
+<div class="flywheel">
+  <div class="fw-ring"></div>
+  <div class="fw-center">
+    <div class="fw-title">技能宝</div>
+    <div class="fw-sub">搜索 · 推荐 · 安装</div>
+  </div>
+  <div class="fw-item top">
+    <div class="fw-icon">🛰</div>
+    <div class="fw-name">卫星 Skill 矩阵</div>
+    <div class="fw-desc">20 个已上线，每个植入推荐</div>
+  </div>
+  <div class="fw-item tr">
+    <div class="fw-icon">🔍</div>
+    <div class="fw-name">能力缺口检测</div>
+    <div class="fw-desc">用户缺啥推啥，不是广告</div>
+  </div>
+  <div class="fw-item right">
+    <div class="fw-icon">📦</div>
+    <div class="fw-name">精选库 2004</div>
+    <div class="fw-desc">搜什么都能找到</div>
+  </div>
+  <div class="fw-item br">
+    <div class="fw-icon">🔒</div>
+    <div class="fw-name">安全评分</div>
+    <div class="fw-desc">12重检测 + OpenSSF</div>
+  </div>
+  <div class="fw-item bottom">
+    <div class="fw-icon">🇨🇳</div>
+    <div class="fw-name">中文优先</div>
+    <div class="fw-desc">别人都是英文，我们中文</div>
+  </div>
+  <div class="fw-item bl">
+    <div class="fw-icon">🔧</div>
+    <div class="fw-name">开发者 SDK</div>
+    <div class="fw-desc">模板自带技能宝推荐</div>
+  </div>
+  <div class="fw-item left">
+    <div class="fw-icon">🌐</div>
+    <div class="fw-name">去中心化分发</div>
+    <div class="fw-desc">Agent 直装，不用访问网页</div>
+  </div>
+  <div class="fw-item tl">
+    <div class="fw-icon">📈</div>
+    <div class="fw-name">交叉导流</div>
+    <div class="fw-desc">卫星→技能宝→更多卫星</div>
+  </div>
+</div>
+
+<!-- ===== COMPETITOR ===== -->
+<div class="section"><div class="section-head"><h2>竞争格局</h2></div></div>
+<div style="padding:0 48px 0">
+<div class="comp-grid">
+  <div class="comp-card">
+    <h3>skills.sh</h3>
+    <div class="comp-sub">全球主导 · 2025下半年</div>
+    <div class="comp-row"><div class="comp-label">Skill</div><div class="comp-bar"><div class="comp-fill" style="width:100%;background:var(--accent)"></div></div><div class="comp-val">89K</div></div>
+    <div class="comp-row"><div class="comp-label">安装量</div><div class="comp-bar"><div class="comp-fill" style="width:100%;background:var(--green)"></div></div><div class="comp-val">2M+</div></div>
+    <div class="comp-row"><div class="comp-label">中文</div><div class="comp-bar"><div class="comp-fill" style="width:3%;background:var(--red)"></div></div><div class="comp-val">无</div></div>
+    <div class="comp-row"><div class="comp-label">安全</div><div class="comp-bar"><div class="comp-fill" style="width:25%;background:var(--orange)"></div></div><div class="comp-val">弱</div></div>
+  </div>
+  <div class="comp-card">
+    <h3>腾讯 SkillHub</h3>
+    <div class="comp-sub">中国区镜像 · 3.10 上线</div>
+    <div class="comp-row"><div class="comp-label">Skill</div><div class="comp-bar"><div class="comp-fill" style="width:15%;background:var(--accent)"></div></div><div class="comp-val">13K</div></div>
+    <div class="comp-row"><div class="comp-label">安装量</div><div class="comp-bar"><div class="comp-fill" style="width:44%;background:var(--green)"></div></div><div class="comp-val">87万</div></div>
+    <div class="comp-row"><div class="comp-label">中文</div><div class="comp-bar"><div class="comp-fill" style="width:30%;background:var(--orange)"></div></div><div class="comp-val">部分</div></div>
+    <div class="comp-row"><div class="comp-label">安全</div><div class="comp-bar"><div class="comp-fill" style="width:35%;background:var(--orange)"></div></div><div class="comp-val">不透明</div></div>
+  </div>
+  <div class="comp-card">
+    <h3>skillhub.club</h3>
+    <div class="comp-sub">独立第三方 · $9.99/月</div>
+    <div class="comp-row"><div class="comp-label">Skill</div><div class="comp-bar"><div class="comp-fill" style="width:34%;background:var(--accent)"></div></div><div class="comp-val">30K</div></div>
+    <div class="comp-row"><div class="comp-label">评分</div><div class="comp-bar"><div class="comp-fill" style="width:70%;background:var(--blue)"></div></div><div class="comp-val">S-Rank</div></div>
+    <div class="comp-row"><div class="comp-label">中文</div><div class="comp-bar"><div class="comp-fill" style="width:3%;background:var(--red)"></div></div><div class="comp-val">无</div></div>
+    <div class="comp-row"><div class="comp-label">价格</div><div class="comp-bar"><div class="comp-fill" style="width:60%;background:var(--red)"></div></div><div class="comp-val">付费</div></div>
+  </div>
+  <div class="comp-card us">
+    <h3 style="color:var(--green)">技能宝（我们）</h3>
+    <div class="comp-sub">去中心化 · 中文优先 · 免费</div>
+    <div class="comp-row"><div class="comp-label">精选</div><div class="comp-bar"><div class="comp-fill" style="width:20%;background:var(--green)"></div></div><div class="comp-val">2004</div></div>
+    <div class="comp-row"><div class="comp-label">中文</div><div class="comp-bar"><div class="comp-fill" style="width:100%;background:var(--green)"></div></div><div class="comp-val">100%</div></div>
+    <div class="comp-row"><div class="comp-label">安全</div><div class="comp-bar"><div class="comp-fill" style="width:80%;background:var(--green)"></div></div><div class="comp-val">v2</div></div>
+    <div class="comp-row"><div class="comp-label">分发</div><div class="comp-bar"><div class="comp-fill" style="width:90%;background:var(--green)"></div></div><div class="comp-val">去中心化</div></div>
+  </div>
+</div>
+</div>
+
+<!-- ===== SKILLS MATRIX ===== -->
+<div class="section"><div class="section-head"><h2>卫星 Skill 矩阵</h2><div class="badge">20 个已上线</div></div></div>
+<div style="padding:0 48px">
+<div class="matrix-grid">
+  <div class="m-card"><div class="m-dot cn"></div><div><div class="m-name">小红书</div><div class="m-type">原创 · 内容</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">前端美化</div><div class="m-type">增强 · 开发</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">设计大师</div><div class="m-type">增强 · 设计</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">头脑风暴</div><div class="m-type">增强 · 效率</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">PPT大师</div><div class="m-type">增强 · 效率</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">代码审查</div><div class="m-type">增强 · 开发</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">安全审计</div><div class="m-type">增强 · 安全</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">React宝典</div><div class="m-type">增强 · 开发</div></div></div>
+  <div class="m-card"><div class="m-dot cn"></div><div><div class="m-name">抖音脚本</div><div class="m-type">原创 · 内容</div></div></div>
+  <div class="m-card"><div class="m-dot cn"></div><div><div class="m-name">公众号</div><div class="m-type">原创 · 内容</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">测试驱动</div><div class="m-type">增强 · 开发</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">快速调试</div><div class="m-type">增强 · 开发</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">项目规划</div><div class="m-type">增强 · 效率</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">SEO大师</div><div class="m-type">增强 · 营销</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">文案大师</div><div class="m-type">增强 · 内容</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">数据分析</div><div class="m-type">增强 · 数据</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">接口构建</div><div class="m-type">增强 · 开发</div></div></div>
+  <div class="m-card"><div class="m-dot live"></div><div><div class="m-name">Git大师</div><div class="m-type">增强 · 开发</div></div></div>
+  <div class="m-card"><div class="m-dot cn"></div><div><div class="m-name">知乎回答</div><div class="m-type">原创 · 内容</div></div></div>
+  <div class="m-card"><div class="m-dot cn"></div><div><div class="m-name">B站文案</div><div class="m-type">原创 · 内容</div></div></div>
+</div>
+<div style="margin-top:8px;font-size:11px;color:var(--dim);display:flex;gap:16px">
+  <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);vertical-align:middle;margin-right:4px"></span> 复制增强</span>
+  <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--pink);vertical-align:middle;margin-right:4px"></span> 中国特色原创</span>
+</div>
+</div>
+
+<!-- ===== TOOLS ===== -->
+<div class="section"><div class="section-head"><h2>工程工具链</h2></div></div>
+<div style="padding:0 48px">
+<div class="tools-grid">
+  <div class="tool-card"><h4>safety-score.sh</h4><p>安全评分 v1 — 12重检测，S/A/B/C/D 五级</p><code>bash tools/safety-score.sh SKILL.md</code></div>
+  <div class="tool-card"><h4>safety-score-v2.sh</h4><p>安全评分 v2 — OpenSSF Scorecard + 社区举报</p><code>bash tools/safety-score-v2.sh --openssf SKILL.md</code></div>
+  <div class="tool-card"><h4>recommend.sh</h4><p>搜索推荐排序 — 安全分 x 匹配度 x 策略因子</p><code>bash tools/recommend.sh "前端美化"</code></div>
+  <div class="tool-card"><h4>batch-score.sh</h4><p>批量安全评分 — JSON 汇总报告</p><code>bash tools/batch-score.sh skills/</code></div>
+  <div class="tool-card"><h4>skillhub CLI</h4><p>开发者工具 — init / dev / publish 三件套</p><code>npx @skillhub/cli init my-skill</code></div>
+</div>
+</div>
+
+<!-- ===== PR ===== -->
+<div class="section"><div class="section-head"><h2>社区贡献 · 中文化 PR</h2></div></div>
+<div style="padding:0 48px">
+<table class="pr-table">
+  <tr><th>#</th><th>仓库</th><th>Stars</th><th>PR</th></tr>
+  <tr><td>1</td><td>OthmanAdi/planning-with-files</td><td>16,382</td><td><a href="https://github.com/OthmanAdi/planning-with-files/pull/108">#108</a></td></tr>
+  <tr><td>2</td><td>blader/humanizer</td><td>9,868</td><td><a href="https://github.com/blader/humanizer/pull/61">#61</a></td></tr>
+  <tr><td>3</td><td>SawyerHood/dev-browser</td><td>3,902</td><td><a href="https://github.com/SawyerHood/dev-browser/pull/55">#55</a></td></tr>
+  <tr><td>4</td><td>lackeyjb/playwright-skill</td><td>2,046</td><td><a href="https://github.com/lackeyjb/playwright-skill/pull/36">#36</a></td></tr>
+  <tr><td>5</td><td>SimoneAvogadro/android-reverse-engineering</td><td>1,142</td><td><a href="https://github.com/SimoneAvogadro/android-reverse-engineering-skill/pull/4">#4</a></td></tr>
+  <tr><td>6</td><td>htdt/godogen</td><td>967</td><td><a href="https://github.com/htdt/godogen/pull/12">#12</a></td></tr>
+  <tr><td>7</td><td>Lum1104/Understand-Anything</td><td>767</td><td><a href="https://github.com/Lum1104/Understand-Anything/pull/5">#5</a></td></tr>
+  <tr><td>8</td><td>shuvonsec/claude-bug-bounty</td><td>762</td><td><a href="https://github.com/shuvonsec/claude-bug-bounty/pull/2">#2</a></td></tr>
+  <tr><td>9</td><td>nidhinjs/prompt-master</td><td>526</td><td><a href="https://github.com/nidhinjs/prompt-master/pull/9">#9</a></td></tr>
+  <tr><td>10</td><td>dgreenheck/webgpu-claude-skill</td><td>447</td><td><a href="https://github.com/dgreenheck/webgpu-claude-skill/pull/6">#6</a></td></tr>
+</table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div style="margin-bottom:12px">一条命令安装全部 20 个 Skill 到 42 个 Agent 平台</div>
+  <code>npx skills add mindverse/skillhub --full-depth --skill '*' -g -y</code>
+  <div style="margin-top:16px">技能宝 SkillHub — 中文社区最大的 AI 技能搜索与安装平台</div>
+</div>
+
+</body>
+</html>

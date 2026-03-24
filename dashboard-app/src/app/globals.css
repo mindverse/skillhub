@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #ffffff;
+  --bg2: #f5f5f7;
+  --card: #ffffff;
+  --card2: #f5f5f7;
+  --border: #e5e5ea;
+  --text: #1d1d1f;
+  --text2: #424245;
+  --dim: #86868b;
+  --accent: #0071e3;
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --blue: #007aff;
+  --pink: #ff2d55;
+  --cyan: #5ac8fa;
+  --purple: #af52de;
+  --teal: #30b0c7;
+  --shadow: rgba(0,0,0,.04);
+  --shadow2: rgba(0,0,0,.08);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-geist-sans);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg2);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'PingFang SC', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: rgba(0,113,227,.15); }
+
+input:focus, select:focus { outline: none; box-shadow: 0 0 0 4px rgba(0,113,227,.15); border-color: var(--accent) !important; }
+
+a { transition: opacity .15s; }
+a:hover { opacity: .75; }
+
+html { scroll-behavior: smooth; }

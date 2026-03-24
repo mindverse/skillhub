@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment
+.env
+.env.*
+!.env.local.example
+
+# Vercel
+.vercel/
+
+# Claude Code local state
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Session exports (local only)
+session-export.md
+
+# Audio files
+*.m4a
+
+# Transcripts (local only)
+技能宝-转录.txt
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+
+# IDE
+.idea/
+.vscode/
