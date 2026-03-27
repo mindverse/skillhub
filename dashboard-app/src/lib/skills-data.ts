@@ -250,4 +250,14 @@ export const allSkills: SkillDetail[] = [
   { slug: "landing-page", name: "着陆页", nameEn: "landing-page", type: "enhanced", category: "设计", lines: 200, safetyScore: 88, grade: "A", installCmd: "npx skills add mindverse/skillhub@landing-page -g -y", description: "高转化率着陆页设计与开发，Hero/CTA/社会证明。", features: ["Hero区域", "CTA优化", "社会证明", "移动优先"], useCases: ["做着陆页", "landing page", "产品页面"], triggerWords: ["着陆页", "landing page", "首页", "转化率"], skillMdPreview: "# 着陆页\n\nHero / CTA / 社会证明 / FAQ / 移动优先" },
   { slug: "chrome-extension", name: "浏览器插件", nameEn: "chrome-extension", type: "enhanced", category: "开发工具", lines: 200, safetyScore: 88, grade: "A", installCmd: "npx skills add mindverse/skillhub@chrome-extension -g -y", description: "Chrome Extension 开发，Manifest V3，content script。", features: ["Manifest V3", "content script", "popup", "storage API"], useCases: ["开发浏览器插件", "Chrome 扩展", "content script"], triggerWords: ["Chrome扩展", "浏览器插件", "extension"], skillMdPreview: "# 浏览器插件\n\nManifest V3 / content script / popup / storage" },
   { slug: "system-design", name: "系统设计", nameEn: "system-design", type: "enhanced", category: "开发工具", lines: 200, safetyScore: 88, grade: "A", installCmd: "npx skills add mindverse/skillhub@system-design -g -y", description: "面试级系统设计，高并发、分布式、缓存、消息队列。", features: ["容量估算", "高层设计", "数据库选型", "Trade-offs"], useCases: ["系统设计", "架构设计", "面试准备"], triggerWords: ["系统设计", "架构", "高并发", "system design"], skillMdPreview: "# 系统设计\n\n容量估算 / 高层设计 / 深入设计 / 扩展优化 / Trade-offs" },
+  {
+    slug: "excel-master", name: "Excel大师", nameEn: "excel-master", type: "enhanced", category: "效率工具",
+    lines: 350, safetyScore: 95, grade: "S", upstream: "minimax-ai/skills",
+    installCmd: "npx skills add mindverse/skillhub@excel-master -g -y",
+    description: "专业 Excel 表格生成与编辑。说一句话直接输出 .xlsx 文件，Excel/WPS 打开即用。月报、预算表、KPI考核、进销存、财务模型、工资表全搞定。",
+    features: ["直接生成 .xlsx 文件", "公式自动计算", "人民币/中文日期格式", "多 Sheet 联动", "进销存/KPI/月报模板", "WPS 兼容"],
+    useCases: ["做个月度销售报表", "帮我做个预算表", "做个KPI考核表", "帮我做个进销存表", "做个工资表", "分析一下这个Excel"],
+    triggerWords: ["Excel", "表格", "做个表", "月报", "预算", "KPI", "进销存", "xlsx", "工资表", "报价单", "考勤表", "排期表", "财务模型"],
+    skillMdPreview: "# Excel大师 — 专业电子表格\n\n说一句话，直接生成 .xlsx 文件。\n\n## 六大能力\n1. 新建表格（月报/预算/KPI/进销存）\n2. 读取分析（pandas）\n3. 编辑修改（保留原格式）\n4. 修复公式\n5. 验证检查\n6. 中文格式（¥/万元/中文日期/A4打印）\n\n基于 minimax-xlsx XML 引擎，不破坏复杂格式",
+  },
 ];

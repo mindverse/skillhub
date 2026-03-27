@@ -26,6 +26,45 @@ async function getHomeData() {
   };
 }
 
+// 场景驱动的推荐卡片
+const SCENARIOS = [
+  {
+    scenario: "写小红书种草笔记",
+    skill: "xiaohongshu",
+    skillName: "小红书",
+    result: "emoji、短段落、爆款标题、标签策略全有，改改就能发",
+    cmd: "npx skills add mindverse/skillhub@xiaohongshu -g -y",
+  },
+  {
+    scenario: "做个季度汇报 PPT",
+    skill: "ppt-master",
+    skillName: "PPT大师",
+    result: "生成 HTML 幻灯片，浏览器打开直接演示，15 套配色可选",
+    cmd: "npx skills add mindverse/skillhub@ppt-master -g -y",
+  },
+  {
+    scenario: "帮我 review 一下代码",
+    skill: "code-review",
+    skillName: "代码审查",
+    result: "逐文件结构化报告：严重 / 警告 / 建议三级，附修复方案",
+    cmd: "npx skills add mindverse/skillhub@code-review -g -y",
+  },
+  {
+    scenario: "这个合同有没有坑",
+    skill: "contract-review",
+    skillName: "合同审查",
+    result: "逐条标注风险等级，霸王条款高亮，基于中国法律场景",
+    cmd: "npx skills add mindverse/skillhub@contract-review -g -y",
+  },
+  {
+    scenario: "写个抖音带货脚本",
+    skill: "douyin-script",
+    skillName: "抖音脚本",
+    result: "前 3 秒钩子 + 正文 + 分镜表，口播/带货/剧情多种类型",
+    cmd: "npx skills add mindverse/skillhub@douyin-script -g -y",
+  },
+];
+
 export default async function Home() {
   const { totalSkills, featured, trending, categories } = await getHomeData();
   const totalDisplay = totalSkills >= 1000 ? `${Math.floor(totalSkills / 1000)},${String(totalSkills % 1000).padStart(3, "0")}` : String(totalSkills);
@@ -34,37 +73,38 @@ export default async function Home() {
     <div style={{ minHeight: "100vh", background: "#f5f5f7", color: "#1d1d1f" }}>
       <Nav />
 
-      {/* ===== Hero: 搜索引擎 ===== */}
-      <section style={{ padding: "80px 24px 64px", textAlign: "center", background: "#fff" }}>
+      {/* ===== Hero: 场景驱动 ===== */}
+      <section style={{ padding: "80px 24px 48px", textAlign: "center", background: "#fff" }}>
         <h1 style={{ fontSize: 48, fontWeight: 700, margin: "0 0 12px", lineHeight: 1.15, letterSpacing: -.5, color: "#1d1d1f" }}>
-          搜索 {totalDisplay}+ AI 技能
+          你想做什么？帮你找到对的技能
         </h1>
-        <p style={{ fontSize: 20, color: "#86868b", margin: "0 0 32px", fontWeight: 400 }}>
-          全网最大中文 AI Skill 搜索引擎 — 搜索、评分、一键安装
+        <p style={{ fontSize: 20, color: "#86868b", margin: "0 0 36px", fontWeight: 400 }}>
+          {totalDisplay}+ AI 技能，中文搜索，安全评分，找到就能装
         </p>
 
-        {/* Search bar */}
-        <div style={{ maxWidth: 600, margin: "0 auto 24px" }}>
+        {/* Search bar — 核心入口 */}
+        <div style={{ maxWidth: 600, margin: "0 auto 28px" }}>
           <Link href="/skills" style={{ textDecoration: "none" }}>
             <div style={{
               display: "flex", alignItems: "center", gap: 12,
-              background: "#f5f5f7", borderRadius: 16, padding: "18px 24px",
-              border: "1px solid #e5e5ea", cursor: "pointer",
+              background: "#fff", borderRadius: 16, padding: "18px 24px",
+              border: "2px solid #e5e5ea", cursor: "pointer",
+              boxShadow: "0 4px 16px rgba(0,0,0,.06)",
               transition: "border-color .15s, box-shadow .15s",
             }}>
               <span style={{ fontSize: 20, color: "#86868b" }}>&#128269;</span>
-              <span style={{ fontSize: 17, color: "#86868b" }}>搜索技能... 比如「小红书」「代码审查」「PPT」</span>
+              <span style={{ fontSize: 17, color: "#86868b" }}>搜索技能... 「写小红书」「审合同」「做 PPT」</span>
             </div>
           </Link>
         </div>
 
         {/* Quick category pills */}
-        <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
+        <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
           {categories.map((cat) => (
             <Link key={cat.slug} href={`/skills?category=${cat.name_zh}`} style={{ textDecoration: "none" }}>
               <span style={{
                 padding: "7px 16px", borderRadius: 980, fontSize: 14,
-                background: "#e8e8ed", color: "#424245", cursor: "pointer",
+                background: "#f5f5f7", color: "#424245", cursor: "pointer",
                 transition: "all .15s",
               }}>
                 {cat.name_zh} {cat.skill_count}
@@ -72,47 +112,55 @@ export default async function Home() {
             </Link>
           ))}
         </div>
-
-        {/* Quick install */}
-        <div style={{
-          display: "inline-flex", alignItems: "center", gap: 10,
-          background: "#1d1d1f", borderRadius: 12, padding: "14px 24px",
-        }}>
-          <span style={{ color: "#86868b", fontSize: 14 }}>$</span>
-          <code style={{ fontSize: 14, color: "#fff", fontFamily: "'SF Mono', Menlo, monospace" }}>npx skills add mindverse/skillhub --full-depth --skill &apos;*&apos; -g -y</code>
-        </div>
-        <p style={{ fontSize: 13, color: "#86868b", marginTop: 10 }}>或者一条命令安装全部 50 个官方精选技能</p>
       </section>
 
-      {/* ===== Stats bar ===== */}
-      <section style={{ padding: "20px 24px", background: "#fff", borderTop: "1px solid #f0f0f2" }}>
-        <div style={{ display: "flex", justifyContent: "center", gap: 48, flexWrap: "wrap" }}>
-          <StatItem value={totalDisplay + "+"} label="收录技能" />
-          <StatItem value="50" label="官方精选" />
-          <StatItem value="13" label="分类" />
-          <StatItem value="12 重" label="安全检测" />
-          <StatItem value="42" label="平台支持" />
-        </div>
-      </section>
-
-      {/* ===== 效果演示 ===== */}
-      <section style={{ padding: "48px 24px", maxWidth: 700, margin: "0 auto" }}>
-        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20, textAlign: "center", letterSpacing: -.2 }}>
-          装完后，对 AI 说一句话就行
+      {/* ===== 场景演示：说句话 → 找到技能 → 装上就用 ===== */}
+      <section style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto" }}>
+        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8, textAlign: "center", letterSpacing: -.2 }}>
+          说句话，找到技能，装上就用
         </h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <DemoCard slug="xiaohongshu" input="帮我写个小红书种草笔记" output="emoji、短段落、爆款标题、标签策略全有，改改就能发" />
-          <DemoCard slug="ppt-master" input="做个 PPT，主题是 Q1 复盘" output="生成 HTML 幻灯片，浏览器打开直接演示，15 套配色" />
-          <DemoCard slug="code-review" input="帮我 review 一下这段代码" output="逐文件审查，输出结构化报告：严重 / 警告 / 建议三级" />
+        <p style={{ fontSize: 15, color: "#86868b", textAlign: "center", marginBottom: 28 }}>
+          每个技能独立安装，一条命令搞定，用完即走
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {SCENARIOS.map((s) => (
+            <Link key={s.skill} href={`/skills/${s.skill}`} style={{ textDecoration: "none", color: "inherit" }}>
+              <div style={{
+                background: "#fff", borderRadius: 16, padding: "22px 24px",
+                boxShadow: "0 1px 3px rgba(0,0,0,.04), 0 0 0 1px rgba(0,0,0,.04)",
+                cursor: "pointer", transition: "box-shadow .15s",
+              }}>
+                {/* 用户说的话 */}
+                <div style={{ fontSize: 16, fontWeight: 600, color: "#1d1d1f", marginBottom: 8 }}>
+                  &ldquo;{s.scenario}&rdquo;
+                </div>
+                {/* 匹配到的技能 + 结果 */}
+                <div style={{ fontSize: 14, color: "#86868b", lineHeight: 1.6, marginBottom: 12 }}>
+                  <span style={{ color: "#007aff", fontWeight: 600 }}>{s.skillName}</span> → {s.result}
+                </div>
+                {/* 安装命令 */}
+                <div style={{
+                  background: "#1d1d1f", borderRadius: 8, padding: "10px 16px",
+                  display: "flex", alignItems: "center", gap: 8,
+                }}>
+                  <span style={{ color: "#86868b", fontSize: 12 }}>$</span>
+                  <code style={{ fontSize: 12, color: "#fff", fontFamily: "'SF Mono', Menlo, monospace" }}>{s.cmd}</code>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
       {/* ===== 官方精选 ===== */}
       <section style={{ padding: "24px 24px 48px", maxWidth: 980, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: -.2 }}>官方精选</h2>
-          <Link href="/skills?ours=true" style={{ fontSize: 14, color: "#007aff", textDecoration: "none", fontWeight: 500 }}>全部 50 个精选 →</Link>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: -.2 }}>精品技能</h2>
+          <Link href="/skills?ours=true" style={{ fontSize: 14, color: "#007aff", textDecoration: "none", fontWeight: 500 }}>查看全部 →</Link>
         </div>
+        <p style={{ fontSize: 15, color: "#86868b", marginTop: -8, marginBottom: 20 }}>
+          我们从 {totalDisplay}+ 技能中精选了 50 个，针对中文场景深度优化，质量有保障
+        </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 12 }}>
           {featured.map((s) => (
             <Link key={s.slug} href={`/skills/${s.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
@@ -124,7 +172,7 @@ export default async function Home() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <h3 style={{ fontSize: 17, fontWeight: 600, margin: 0 }}>{s.name_zh || s.name}</h3>
-                    {s.is_ours && <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 6, background: "#fff0f5", color: "#ff2d55", fontWeight: 500 }}>精选</span>}
+                    <span style={{ fontSize: 10, padding: "2px 6px", borderRadius: 6, background: "#fff0f5", color: "#ff2d55", fontWeight: 500 }}>精选</span>
                   </div>
                   <span style={{ fontSize: 13, fontWeight: 600, color: gradeColor[s.safety_level] || "#86868b" }}>{s.safety_level}级</span>
                 </div>
@@ -145,7 +193,7 @@ export default async function Home() {
       {/* ===== 热门排行 ===== */}
       <section style={{ padding: "24px 24px 48px", maxWidth: 700, margin: "0 auto" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: -.2 }}>热门技能</h2>
+          <h2 style={{ fontSize: 24, fontWeight: 700, letterSpacing: -.2 }}>大家在用</h2>
           <Link href="/leaderboard" style={{ fontSize: 14, color: "#007aff", textDecoration: "none", fontWeight: 500 }}>排行榜 →</Link>
         </div>
         <div style={{ background: "#fff", borderRadius: 16, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,.04), 0 0 0 1px rgba(0,0,0,.04)" }}>
@@ -171,21 +219,21 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ===== 差异化 ===== */}
+      {/* ===== 为什么选技能宝 ===== */}
       <section style={{ padding: "48px 24px 56px", maxWidth: 700, margin: "0 auto" }}>
-        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20, textAlign: "center" }}>为什么选技能宝？</h2>
+        <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20, textAlign: "center" }}>为什么用技能宝找技能？</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
-          <TrustCard title="中文优先" desc="唯一中文 AI Skill 搜索引擎。全部技能中文名、中文描述、中文搜索。" />
-          <TrustCard title="安全评级" desc="每个技能 12 重安全检测，S/A/B/C/D 五级评分，安装前看到风险。" />
-          <TrustCard title="全网收录" desc={`收录 ${totalDisplay}+ 技能，不只是我们自己的，全 GitHub 的 Skill 都能搜到。`} />
-          <TrustCard title="官方精选" desc="50 个自研精选技能，中文优化、质量保证，一条命令全装。" />
+          <TrustCard title="中文市场唯一" desc="全网唯一中文 AI Skill 搜索引擎。中文名、中文描述、中文搜索，给中国用户做的。" />
+          <TrustCard title="贴合真实场景" desc="不是罗列功能清单，而是从你的需求出发——写小红书、审合同、做 PPT——帮你找到最合适的那一个。" />
+          <TrustCard title="安全看得见" desc="每个技能 12 重安全检测，S/A/B/C/D 五级评分。装之前就知道安不安全。" />
+          <TrustCard title="用多少装多少" desc="不搞全家桶。需要哪个装哪个，一条命令搞定，支持 42 个 AI 平台。" />
         </div>
       </section>
 
       {/* ===== 底部 CTA ===== */}
       <section style={{ padding: "48px 24px", textAlign: "center", background: "#fff", borderTop: "1px solid #e5e5ea" }}>
-        <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 12 }}>找到你需要的 AI 技能</h2>
-        <p style={{ fontSize: 16, color: "#86868b", marginBottom: 24 }}>{totalDisplay}+ 技能收录，中文搜索，安全评分，一键安装。</p>
+        <h2 style={{ fontSize: 28, fontWeight: 700, marginBottom: 12 }}>找到适合你的 AI 技能</h2>
+        <p style={{ fontSize: 16, color: "#86868b", marginBottom: 24 }}>{totalDisplay}+ 技能收录，搜一下就知道有没有</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           <Link href="/skills" style={{
             display: "inline-flex", alignItems: "center", padding: "14px 28px",
@@ -215,37 +263,6 @@ export default async function Home() {
         </p>
       </footer>
     </div>
-  );
-}
-
-function StatItem({ value, label }: { value: string; label: string }) {
-  return (
-    <div style={{ textAlign: "center" }}>
-      <div style={{ fontSize: 28, fontWeight: 700, color: "#1d1d1f" }}>{value}</div>
-      <div style={{ fontSize: 13, color: "#86868b" }}>{label}</div>
-    </div>
-  );
-}
-
-function DemoCard({ slug, input, output }: { slug: string; input: string; output: string }) {
-  return (
-    <Link href={`/skills/${slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-      <div style={{
-        background: "#fff", borderRadius: 14, padding: "18px 20px",
-        boxShadow: "0 1px 3px rgba(0,0,0,.04), 0 0 0 1px rgba(0,0,0,.04)",
-        cursor: "pointer", transition: "box-shadow .15s",
-      }}>
-        <div style={{ fontSize: 15, fontWeight: 600, color: "#1d1d1f", marginBottom: 6 }}>
-          &ldquo;{input}&rdquo;
-        </div>
-        <div style={{ fontSize: 14, color: "#86868b", lineHeight: 1.5, marginBottom: 10 }}>
-          → {output}
-        </div>
-        <div style={{ fontSize: 13, color: "#007aff", fontWeight: 500 }}>
-          查看这个技能 →
-        </div>
-      </div>
-    </Link>
   );
 }
 
